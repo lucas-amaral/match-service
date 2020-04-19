@@ -1,0 +1,31 @@
+variables:
+  MAVEN_OPTS: "-Dmaven.repo.local=.m2 -Dmaven.artifact.threads=8"
+
+stages:
+  - test
+  - deploy
+
+test:
+  stage: test
+  image: maven:3.6.2-jdk-11
+  script:
+    - mvn -q clean
+    - mvn -q package
+  cache:
+    paths:
+      - .m2/
+  artifacts:
+    paths:
+      - target/match-service-1.0.0-SNAPSHOT.jar
+
+deploy:
+  stage: deploy
+  image: ruby:latest
+  before_script:
+    - apt-get update -qy
+    - apt-get install -y ruby-dev
+    - gem install dpl
+  script:
+    - dpl --provider=heroku --app=$HEROKU_APP_PRODUCTION --api-key=$HEROKU_API_KEY
+  only:
+    - master

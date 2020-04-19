@@ -1,0 +1,14 @@
+### MAVEN ###
+target/
+.mvn
+
+### APPLICATION ###
+*.log
+*.gz
+native-libs
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr

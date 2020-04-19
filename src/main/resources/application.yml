@@ -1,0 +1,15 @@
+spring:
+
+  data:
+    mongodb:
+      uri: mongodb+srv://match:5ZWAMf4byyKoPHso@clusterpropostaaceita-yhkgq.mongodb.net/test?retryWrites=true&w=majority
+      database: match
+
+services:
+
+  internal:
+    username: internal
+    password: yblYhVyCtFB0aSm5
+
+  url:
+    notification: notification.com
