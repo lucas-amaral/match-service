@@ -21,22 +21,24 @@ public class Interest {
     private final Integer dorms;
     private final Integer suites;
     private final Integer bathrooms;
+    private final Integer garages;
     private final Boolean pool;
     private final Boolean balcony;
     private final Boolean elevator;
     private final Boolean barbecueGrill;
     private final List<Barter> barters;
 
-    public Interest(Integer id, BigDecimal value, Boolean financing, BigDecimal financingValue, List<PropertyType> types, List<Integer> neighborhoodIds, Integer dorms, Integer suites, Integer bathrooms, Boolean pool, Boolean balcony, Boolean elevator, Boolean barbecueGrill, List<Barter> barters) {
+    public Interest(Integer id, BigDecimal value, Boolean financing, BigDecimal financingValue, List<PropertyType> types, List<Integer> neighborhoodIds, Integer dorms, Integer suites, Integer bathrooms, Integer garages, Boolean pool, Boolean balcony, Boolean elevator, Boolean barbecueGrill, List<Barter> barters) {
         this.id = id;
         this.value = value;
         this.financing = financing;
         this.financingValue = financingValue;
         this.types = types;
         this.neighborhoodIds = neighborhoodIds;
-        this.dorms = dorms;
-        this.suites = suites;
-        this.bathrooms = bathrooms;
+        this.dorms = (dorms == null) ? 0 : dorms;
+        this.suites = (suites == null) ? 0 : suites;
+        this.bathrooms = (bathrooms == null) ? 0 : bathrooms;
+        this.garages = (garages == null) ? 0 : garages;
         this.pool = pool;
         this.balcony = balcony;
         this.elevator = elevator;
@@ -80,6 +82,10 @@ public class Interest {
         return bathrooms;
     }
 
+    public Integer getGarages() {
+        return garages;
+    }
+
     public Boolean getPool() {
         return pool;
     }
@@ -114,6 +120,7 @@ public class Interest {
                 Objects.equals(dorms, interest.dorms) &&
                 Objects.equals(suites, interest.suites) &&
                 Objects.equals(bathrooms, interest.bathrooms) &&
+                Objects.equals(garages, interest.garages) &&
                 Objects.equals(pool, interest.pool) &&
                 Objects.equals(balcony, interest.balcony) &&
                 Objects.equals(elevator, interest.elevator) &&
@@ -123,7 +130,7 @@ public class Interest {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, value, financing, financingValue, types, neighborhoodIds, dorms, suites, bathrooms, pool, balcony, elevator, barbecueGrill, barters);
+        return Objects.hash(id, value, financing, financingValue, types, neighborhoodIds, dorms, suites, bathrooms, garages, pool, balcony, elevator, barbecueGrill, barters);
     }
 
     @Override
@@ -138,6 +145,7 @@ public class Interest {
                 .add("dorms=" + dorms)
                 .add("suites=" + suites)
                 .add("bathrooms=" + bathrooms)
+                .add("garages=" + garages)
                 .add("pool=" + pool)
                 .add("balcony=" + balcony)
                 .add("elevator=" + elevator)

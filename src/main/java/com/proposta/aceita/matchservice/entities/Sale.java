@@ -8,30 +8,32 @@ import java.math.BigDecimal;
 import java.util.Objects;
 import java.util.StringJoiner;
 
-@Document("properties")
-public class Property {
+@Document("sales")
+public class Sale {
     @Id
     private final Integer id;
+    private final Integer propertyId;
     private final Integer neighborhoodId;
     private final PropertyType type;
     private final Integer dorms;
     private final Integer suites;
     private final Integer bathrooms;
-    private final Boolean pool;
-    private final Boolean balcony;
-    private final Boolean elevator;
-    private final Boolean barbecueGrill;
+    private final boolean pool;
+    private final boolean balcony;
+    private final boolean elevator;
+    private final boolean barbecueGrill;
     private final Integer garages;
     private final BigDecimal value;
-    private final Boolean financing;
+    private final boolean financing;
     private final BigDecimal financingValue;
-    private final Boolean barterVehicle;
+    private final boolean barterVehicle;
     private final BigDecimal barterVehicleValue;
-    private final Boolean barterProperty;
+    private final boolean barterProperty;
     private final BigDecimal barterPropertyValue;
 
-    public Property(Integer id, Integer neighborhoodId, PropertyType type, Integer dorms, Integer suites, Integer bathrooms, Boolean pool, Boolean balcony, Boolean elevator, Boolean barbecueGrill, Integer garages, BigDecimal value, Boolean financing, BigDecimal financingValue, Boolean barterVehicle, BigDecimal barterVehicleValue, Boolean barterProperty, BigDecimal barterPropertyValue) {
+    public Sale(Integer id, Integer propertyId, Integer neighborhoodId, PropertyType type, Integer dorms, Integer suites, Integer bathrooms, boolean pool, boolean balcony, boolean elevator, boolean barbecueGrill, Integer garages, BigDecimal value, boolean financing, BigDecimal financingValue, boolean barterVehicle, BigDecimal barterVehicleValue, boolean barterProperty, BigDecimal barterPropertyValue) {
         this.id = id;
+        this.propertyId = propertyId;
         this.neighborhoodId = neighborhoodId;
         this.type = type;
         this.dorms = dorms;
@@ -53,6 +55,10 @@ public class Property {
 
     public Integer getId() {
         return id;
+    }
+
+    public Integer getPropertyId() {
+        return propertyId;
     }
 
     public Integer getNeighborhoodId() {
@@ -127,36 +133,38 @@ public class Property {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Property property = (Property) o;
-        return Objects.equals(id, property.id) &&
-                Objects.equals(neighborhoodId, property.neighborhoodId) &&
-                type == property.type &&
-                Objects.equals(dorms, property.dorms) &&
-                Objects.equals(suites, property.suites) &&
-                Objects.equals(bathrooms, property.bathrooms) &&
-                Objects.equals(pool, property.pool) &&
-                Objects.equals(balcony, property.balcony) &&
-                Objects.equals(elevator, property.elevator) &&
-                Objects.equals(barbecueGrill, property.barbecueGrill) &&
-                Objects.equals(garages, property.garages) &&
-                Objects.equals(value, property.value) &&
-                Objects.equals(financing, property.financing) &&
-                Objects.equals(financingValue, property.financingValue) &&
-                Objects.equals(barterVehicle, property.barterVehicle) &&
-                Objects.equals(barterVehicleValue, property.barterVehicleValue) &&
-                Objects.equals(barterProperty, property.barterProperty) &&
-                Objects.equals(barterPropertyValue, property.barterPropertyValue);
+        Sale sale = (Sale) o;
+        return Objects.equals(id, sale.id) &&
+                Objects.equals(propertyId, sale.propertyId) &&
+                Objects.equals(neighborhoodId, sale.neighborhoodId) &&
+                type == sale.type &&
+                Objects.equals(dorms, sale.dorms) &&
+                Objects.equals(suites, sale.suites) &&
+                Objects.equals(bathrooms, sale.bathrooms) &&
+                Objects.equals(pool, sale.pool) &&
+                Objects.equals(balcony, sale.balcony) &&
+                Objects.equals(elevator, sale.elevator) &&
+                Objects.equals(barbecueGrill, sale.barbecueGrill) &&
+                Objects.equals(garages, sale.garages) &&
+                Objects.equals(value, sale.value) &&
+                Objects.equals(financing, sale.financing) &&
+                Objects.equals(financingValue, sale.financingValue) &&
+                Objects.equals(barterVehicle, sale.barterVehicle) &&
+                Objects.equals(barterVehicleValue, sale.barterVehicleValue) &&
+                Objects.equals(barterProperty, sale.barterProperty) &&
+                Objects.equals(barterPropertyValue, sale.barterPropertyValue);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, neighborhoodId, type, dorms, suites, bathrooms, pool, balcony, elevator, barbecueGrill, garages, value, financing, financingValue, barterVehicle, barterVehicleValue, barterProperty, barterPropertyValue);
+        return Objects.hash(id, propertyId, neighborhoodId, type, dorms, suites, bathrooms, pool, balcony, elevator, barbecueGrill, garages, value, financing, financingValue, barterVehicle, barterVehicleValue, barterProperty, barterPropertyValue);
     }
 
     @Override
     public String toString() {
-        return new StringJoiner(", ", Property.class.getSimpleName() + "[", "]")
+        return new StringJoiner(", ", Sale.class.getSimpleName() + "[", "]")
                 .add("id=" + id)
+                .add("propertyId=" + propertyId)
                 .add("neighborhoodId=" + neighborhoodId)
                 .add("type=" + type)
                 .add("dorms=" + dorms)
