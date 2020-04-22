@@ -13,7 +13,8 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
-import static com.proposta.aceita.matchservice.entities.enums.BarterType.*;
+import static com.proposta.aceita.matchservice.entities.enums.BarterType.PROPERTY;
+import static com.proposta.aceita.matchservice.entities.enums.BarterType.VEHICLE;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
 
@@ -26,166 +27,168 @@ public class NegotiationRepository {
         this.mongoTemplate = mongoTemplate;
     }
 
-    public void save(List<Negotiation> negotiations) {
-        mongoTemplate.save(negotiations);
+    public List<Negotiation> save(List<Negotiation> negotiations) {
+        return (List<Negotiation>) mongoTemplate.insertAll(negotiations);
     }
 
     public void deleteById(String id) {
-        mongoTemplate.findAndRemove(query(Criteria.where("_id").is(id)), Negotiation.class);
+        mongoTemplate.findAndRemove(query(Criteria.where("id").is(id)), Negotiation.class);
     }
 
-    public void delete(List<Negotiation> negotiations) {
-        mongoTemplate.remove(negotiations);
+    public void delete(Negotiation negotiation) {
+        mongoTemplate.remove(negotiation);
     }
 
     public Optional<Negotiation> findById(String id) {
         return Optional.ofNullable(mongoTemplate.findById(id, Negotiation.class));
     }
 
-    public Optional<List<Negotiation>> findBySaleId(Integer saleId) {
-        return Optional.of(mongoTemplate.find(query(Criteria.where("sales.id").is(saleId)), Negotiation.class));
+    public List<Negotiation> findBySaleId(Integer saleId) {
+        return mongoTemplate.find(query(Criteria.where("sale.id").is(saleId)), Negotiation.class);
     }
 
-    public Optional<List<Negotiation>> findByInterestId(Integer interestId) {
-        return Optional.of(mongoTemplate.find(query(Criteria.where("interest.id").is(interestId)), Negotiation.class));
+    public List<Negotiation> findByInterestId(Integer interestId) {
+        return mongoTemplate.find(query(Criteria.where("interest.id").is(interestId)), Negotiation.class);
     }
 
     public List<Interest> findInterestsBySale(Sale sale) {
-        var query = new Query();
+        var criteria = new Criteria()
+                .and("neighborhoodIds").all(List.of(sale.getNeighborhoodId()))
+                .and("types").all(List.of(sale.getType()))
+                .and("value").gte(sale.getValue())
+                .and("dorms").lte(sale.getDorms())
+                .and("suites").lte(sale.getSuites())
+                .and("bathrooms").lte(sale.getBathrooms())
+                .and("garages").lte(sale.getGarages())
+                .andOperator(addFinancingCriteria(sale),
+                        addBartersVehicleCriteria(sale),
+                        addBartersPropertyCriteria(sale));
 
-        query
-            .addCriteria(where("neighborhoodIds").all(sale.getNeighborhoodId()))
-            .addCriteria(where("types").all(sale.getType()))
-            .addCriteria(where("value").gte(sale.getValue()))
-            .addCriteria(where("dorms").lte(sale.getDorms()))
-            .addCriteria(where("suites").lte(sale.getSuites()))
-            .addCriteria(where("bathrooms").lte(sale.getBathrooms()))
-            .addCriteria(where("garages").lte(sale.getGarages()));
+        addPoolCriteria(criteria, sale);
+        addElevatorCriteria(criteria, sale);
+        addBalconyCriteria(criteria, sale);
+        addBarbecueGrillCriteria(criteria, sale);
 
-        addFinancingCriteria(sale, query);
-        addBartersCriteria(sale, query);
-        addPoolCriteria(sale, query);
-        addElevatorCriteria(sale, query);
-        addBalconyCriteria(sale, query);
-        addBarbecueGrillCriteria(sale, query);
-
-        return mongoTemplate.find(query, Interest.class);
+        return mongoTemplate.find(new Query().addCriteria(criteria), Interest.class);
     }
 
-    private void addFinancingCriteria(Sale sale, Query query) {
+    private Criteria addFinancingCriteria(Sale sale) {
         if (!sale.getFinancing()) {
-            query.addCriteria(where("financing").is(sale.getFinancing()));
+            return where("financing").is(false);
         } else {
-            query.addCriteria(where("financingValue").gte(sale.getFinancingValue()));
+            var criteriaValue = where("financingValue").lte(sale.getFinancingValue());
+            var criteriaNotExist = where("financingValue").exists(false);
+            return new Criteria().orOperator(criteriaValue, criteriaNotExist);
         }
     }
 
-    private void addBartersCriteria(Sale sale, Query query) {
+    private Criteria addBartersVehicleCriteria(Sale sale) {
         if (sale.getBarterVehicle()) {
-            query.addCriteria(where("barters")
-                    .all(where("type").is(VEHICLE)
-                            .andOperator(where("value").gte(sale.getBarterPropertyValue()))));
+            return new Criteria().orOperator(where("barters").exists(false),
+                    where("barters").elemMatch(where("type").is(VEHICLE).and("value").lte(sale.getBarterVehicleValue())));
         }
 
+        return new Criteria();
+    }
+
+    private Criteria addBartersPropertyCriteria(Sale sale) {
         if (sale.getBarterProperty()) {
-            query.addCriteria(where("barters")
-                    .all(where("type").is(PROPERTY)
-                            .andOperator(where("value").gte(sale.getBarterPropertyValue()))));
+            return new Criteria().orOperator(where("barters").exists(false),
+                    where("barters").elemMatch(where("type").is(PROPERTY).and("value").lte(sale.getBarterPropertyValue())));
         }
+
+        return new Criteria();
     }
 
-    private void addPoolCriteria(Sale sale, Query query) {
+    private void addPoolCriteria(Criteria criteria, Sale sale) {
         if (!sale.getPool()) {
-            query.addCriteria(where("pool").is(sale.getPool())
-                    .orOperator(where("pool").exists(false)));
+            criteria.and("pool").ne(true);
         }
     }
 
-    private void addElevatorCriteria(Sale sale, Query query) {
+    private void addElevatorCriteria(Criteria criteria, Sale sale) {
         if (!sale.getElevator()) {
-            query.addCriteria(where("elevator").is(sale.getElevator())
-                    .orOperator(where("elevator").exists(false)));
+            criteria.and("elevator").ne(true);
         }
     }
 
-    private void addBalconyCriteria(Sale sale, Query query) {
+    private void addBalconyCriteria(Criteria criteria, Sale sale) {
         if (!sale.getBalcony()) {
-            query.addCriteria(where("balcony").is(sale.getBalcony())
-                    .orOperator(where("balcony").exists(false)));
+            criteria.and("balcony").ne(true);
         }
     }
 
-    private void addBarbecueGrillCriteria(Sale sale, Query query) {
+    private void addBarbecueGrillCriteria(Criteria criteria, Sale sale) {
         if (!sale.getBarbecueGrill()) {
-            query.addCriteria(where("barbecueGrill").is(sale.getBarbecueGrill())
-                    .orOperator(where("barbecueGrill").exists(false)));
+            criteria.and("barbecueGrill").ne(true);
         }
     }
 
     public List<Sale> findSalesByInterest(Interest interest) {
-        var query = new Query();
+        var criteria = new Criteria()
+                .and("neighborhoodId").in(interest.getNeighborhoodIds())
+                .and("type").in(interest.getTypes())
+                .and("value").lte(interest.getValue())
+                .and("dorms").gte(interest.getDorms())
+                .and("suites").gte(interest.getSuites())
+                .and("bathrooms").gte(interest.getBathrooms())
+                .and("garages").gte(interest.getGarages());
 
-        query
-                .addCriteria(where("neighborhoodId").in(interest.getNeighborhoodIds()))
-                .addCriteria(where("type").in(interest.getTypes()))
-                .addCriteria(where("value").lte(interest.getValue()))
-                .addCriteria(where("dorms").gte(interest.getDorms()))
-                .addCriteria(where("suites").gte(interest.getSuites()))
-                .addCriteria(where("bathrooms").gte(interest.getBathrooms()))
-                .addCriteria(where("garages").gte(interest.getGarages()));
+        addFinancingCriteria(criteria, interest);
+        addBartersCriteria(criteria, interest);
+        addPoolCriteria(criteria, interest);
+        addElevatorCriteria(interest, criteria);
+        addBalconyCriteria(interest, criteria);
+        addBarbecueGrillCriteria(interest, criteria);
 
-        addFinancingCriteria(interest, query);
-        addBartersCriteria(interest, query);
-        addPoolCriteria(interest, query);
-        addElevatorCriteria(interest, query);
-        addBalconyCriteria(interest, query);
-        addBarbecueGrillCriteria(interest, query);
-
-        return mongoTemplate.find(query, Sale.class);
+        return mongoTemplate.find(new Query().addCriteria(criteria), Sale.class);
     }
 
-    private void addFinancingCriteria(Interest interest, Query query) {
+    private void addFinancingCriteria(Criteria criteria, Interest interest) {
         if (interest.getFinancing()) {
-            query.addCriteria(where("financing").is(interest.getFinancing()))
-                .addCriteria(where("financingValue").lte(interest.getFinancingValue()));
+            criteria
+                    .and("financing").is(interest.getFinancing())
+                    .and("financingValue").gte(interest.getFinancingValue());
         }
     }
 
-    private void addBartersCriteria(Interest interest, Query query) {
+    private void addBartersCriteria(Criteria criteria, Interest interest) {
         if (!CheckUtils.listIsNullOrEmpty(interest.getBarters())) {
             interest.getBarters().forEach(barter -> {
                 if (barter.getType().equals(VEHICLE)) {
-                    query.addCriteria(where("barterVehicle").is(true))
-                            .addCriteria(where("barterVehicleValue").lte(barter.getValue()));
+                    criteria
+                            .and("barterVehicle").is(true)
+                            .and("barterVehicleValue").gte(barter.getValue());
                 } else if (barter.getType().equals(PROPERTY)) {
-                    query.addCriteria(where("barterProperty").is(true))
-                            .addCriteria(where("barterPropertyValue").lte(barter.getValue()));
+                    criteria
+                            .and("barterProperty").is(true)
+                            .and("barterPropertyValue").gte(barter.getValue());
                 }
             });
         }
     }
 
-    private void addPoolCriteria(Interest interest, Query query) {
+    private void addPoolCriteria(Criteria criteria, Interest interest) {
         if (interest.getPool() != null && interest.getPool()) {
-            query.addCriteria(where("pool").is(interest.getPool()));
+            criteria.and("pool").is(interest.getPool());
         }
     }
 
-    private void addElevatorCriteria(Interest interest, Query query) {
+    private void addElevatorCriteria(Interest interest, Criteria criteria) {
         if (interest.getElevator() != null && interest.getElevator()) {
-            query.addCriteria(where("elevator").is(interest.getElevator()));
+            criteria.and("elevator").is(interest.getElevator());
         }
     }
 
-    private void addBalconyCriteria(Interest interest, Query query) {
+    private void addBalconyCriteria(Interest interest, Criteria criteria) {
         if (interest.getBalcony() != null && interest.getBalcony()) {
-            query.addCriteria(where("balcony").is(interest.getBalcony()));
+            criteria.and("balcony").is(interest.getBalcony());
         }
     }
 
-    private void addBarbecueGrillCriteria(Interest interest, Query query) {
+    private void addBarbecueGrillCriteria(Interest interest, Criteria criteria) {
         if (interest.getBarbecueGrill() != null && interest.getBarbecueGrill()) {
-            query.addCriteria(where("barbecueGrill").is(interest.getBarbecueGrill()));
+            criteria.and("barbecueGrill").is(interest.getBarbecueGrill());
         }
     }
 }

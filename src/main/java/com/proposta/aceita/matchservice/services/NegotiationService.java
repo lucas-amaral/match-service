@@ -30,20 +30,20 @@ public class NegotiationService {
         this.negotiationClosedRepository = negotiationClosedRepository;
     }
 
-    public Optional<List<Negotiation>> getNegotiationBySaleId(Integer saleId) {
+    public List<Negotiation> getNegotiationBySaleId(Integer saleId) {
         return negotiationRepository.findBySaleId(saleId);
     }
 
-    public Optional<List<Negotiation>> getNegotiationByInterestId(Integer interestId) {
-        return negotiationRepository.findBySaleId(interestId);
+    public List<Negotiation> getNegotiationByInterestId(Integer interestId) {
+        return negotiationRepository.findByInterestId(interestId);
     }
 
     public void delete(String id) {
         negotiationRepository.deleteById(id);
     }
 
-    public void delete(List<Negotiation> negotiations) {
-        negotiationRepository.delete(negotiations);
+    public void delete(Negotiation negotiation) {
+        negotiationRepository.delete(negotiation);
     }
 
     public void findAsyncMatches(Sale sale) {
@@ -55,7 +55,7 @@ public class NegotiationService {
         }
     }
 
-    public void findMatches(Sale sale) {
+    void findMatches(Sale sale) {
         var negotiations = negotiationRepository.findInterestsBySale(sale).stream()
                 .map(interest -> Negotiation.of(interest, sale)).collect(Collectors.toList());
 
@@ -73,7 +73,7 @@ public class NegotiationService {
         }
     }
 
-    public void findMatches(Interest interest) {
+    void findMatches(Interest interest) {
         var negotiations = negotiationRepository.findSalesByInterest(interest).stream()
                 .map(sale -> Negotiation.of(interest, sale)).collect(Collectors.toList());
 
@@ -87,7 +87,7 @@ public class NegotiationService {
         negotiationRepository.findById(id).ifPresent(negotiation -> {
             negotiationApprovedBySellerRepository.save(NegotiationApprovedBySeller.of(negotiation));
 
-            negotiationRepository.deleteById(negotiation.getId());
+            negotiationRepository.delete(negotiation);
 
             //todo: send email to buyer
         });
@@ -107,7 +107,7 @@ public class NegotiationService {
         negotiationRepository.findById(id).ifPresent(negotiation -> {
             negotiationClosedRepository.save(NegotiationClosed.of(negotiation));
 
-            negotiationRepository.deleteById(negotiation.getId());
+            negotiationRepository.delete(negotiation);
 
             //todo: send email to buyer
         });

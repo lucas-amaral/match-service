@@ -4,7 +4,6 @@ import com.proposta.aceita.matchservice.entities.enums.PropertyType;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 import java.util.StringJoiner;
@@ -13,9 +12,9 @@ import java.util.StringJoiner;
 public class Interest {
     @Id
     private final Integer id;
-    private final BigDecimal value;
+    private final Double value;
     private final Boolean financing;
-    private final BigDecimal financingValue;
+    private final Double financingValue;
     private final List<PropertyType> types;
     private final List<Integer> neighborhoodIds;
     private final Integer dorms;
@@ -28,7 +27,7 @@ public class Interest {
     private final Boolean barbecueGrill;
     private final List<Barter> barters;
 
-    public Interest(Integer id, BigDecimal value, Boolean financing, BigDecimal financingValue, List<PropertyType> types, List<Integer> neighborhoodIds, Integer dorms, Integer suites, Integer bathrooms, Integer garages, Boolean pool, Boolean balcony, Boolean elevator, Boolean barbecueGrill, List<Barter> barters) {
+    public Interest(Integer id, Double value, Boolean financing, Double financingValue, List<PropertyType> types, List<Integer> neighborhoodIds, Integer dorms, Integer suites, Integer bathrooms, Integer garages, Boolean pool, Boolean balcony, Boolean elevator, Boolean barbecueGrill, List<Barter> barters) {
         this.id = id;
         this.value = value;
         this.financing = financing;
@@ -50,7 +49,7 @@ public class Interest {
         return id;
     }
 
-    public BigDecimal getValue() {
+    public Double getValue() {
         return value;
     }
 
@@ -58,7 +57,7 @@ public class Interest {
         return financing;
     }
 
-    public BigDecimal getFinancingValue() {
+    public Double getFinancingValue() {
         return financingValue;
     }
 

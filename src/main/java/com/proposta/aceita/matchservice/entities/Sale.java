@@ -4,7 +4,6 @@ import com.proposta.aceita.matchservice.entities.enums.PropertyType;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.math.BigDecimal;
 import java.util.Objects;
 import java.util.StringJoiner;
 
@@ -18,20 +17,20 @@ public class Sale {
     private final Integer dorms;
     private final Integer suites;
     private final Integer bathrooms;
+    private final Integer garages;
     private final boolean pool;
     private final boolean balcony;
     private final boolean elevator;
     private final boolean barbecueGrill;
-    private final Integer garages;
-    private final BigDecimal value;
+    private final Double value;
     private final boolean financing;
-    private final BigDecimal financingValue;
+    private final Double financingValue;
     private final boolean barterVehicle;
-    private final BigDecimal barterVehicleValue;
+    private final Double barterVehicleValue;
     private final boolean barterProperty;
-    private final BigDecimal barterPropertyValue;
+    private final Double barterPropertyValue;
 
-    public Sale(Integer id, Integer propertyId, Integer neighborhoodId, PropertyType type, Integer dorms, Integer suites, Integer bathrooms, boolean pool, boolean balcony, boolean elevator, boolean barbecueGrill, Integer garages, BigDecimal value, boolean financing, BigDecimal financingValue, boolean barterVehicle, BigDecimal barterVehicleValue, boolean barterProperty, BigDecimal barterPropertyValue) {
+    public Sale(Integer id, Integer propertyId, Integer neighborhoodId, PropertyType type, Integer dorms, Integer suites, Integer bathrooms, Integer garages, boolean pool, boolean balcony, boolean elevator, boolean barbecueGrill, Double value, boolean financing, Double financingValue, boolean barterVehicle, Double barterVehicleValue, boolean barterProperty, Double barterPropertyValue) {
         this.id = id;
         this.propertyId = propertyId;
         this.neighborhoodId = neighborhoodId;
@@ -39,11 +38,11 @@ public class Sale {
         this.dorms = dorms;
         this.suites = suites;
         this.bathrooms = bathrooms;
+        this.garages = garages;
         this.pool = pool;
         this.balcony = balcony;
         this.elevator = elevator;
         this.barbecueGrill = barbecueGrill;
-        this.garages = garages;
         this.value = value;
         this.financing = financing;
         this.financingValue = financingValue;
@@ -81,6 +80,10 @@ public class Sale {
         return bathrooms;
     }
 
+    public Integer getGarages() {
+        return garages;
+    }
+
     public Boolean getPool() {
         return pool;
     }
@@ -97,11 +100,7 @@ public class Sale {
         return barbecueGrill;
     }
 
-    public Integer getGarages() {
-        return garages;
-    }
-
-    public BigDecimal getValue() {
+    public Double getValue() {
         return value;
     }
 
@@ -109,7 +108,7 @@ public class Sale {
         return financing;
     }
 
-    public BigDecimal getFinancingValue() {
+    public Double getFinancingValue() {
         return financingValue;
     }
 
@@ -117,7 +116,7 @@ public class Sale {
         return barterVehicle;
     }
 
-    public BigDecimal getBarterVehicleValue() {
+    public Double getBarterVehicleValue() {
         return barterVehicleValue;
     }
 
@@ -125,7 +124,7 @@ public class Sale {
         return barterProperty;
     }
 
-    public BigDecimal getBarterPropertyValue() {
+    public Double getBarterPropertyValue() {
         return barterPropertyValue;
     }
 
@@ -141,11 +140,11 @@ public class Sale {
                 Objects.equals(dorms, sale.dorms) &&
                 Objects.equals(suites, sale.suites) &&
                 Objects.equals(bathrooms, sale.bathrooms) &&
+                Objects.equals(garages, sale.garages) &&
                 Objects.equals(pool, sale.pool) &&
                 Objects.equals(balcony, sale.balcony) &&
                 Objects.equals(elevator, sale.elevator) &&
                 Objects.equals(barbecueGrill, sale.barbecueGrill) &&
-                Objects.equals(garages, sale.garages) &&
                 Objects.equals(value, sale.value) &&
                 Objects.equals(financing, sale.financing) &&
                 Objects.equals(financingValue, sale.financingValue) &&
@@ -157,7 +156,7 @@ public class Sale {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, propertyId, neighborhoodId, type, dorms, suites, bathrooms, pool, balcony, elevator, barbecueGrill, garages, value, financing, financingValue, barterVehicle, barterVehicleValue, barterProperty, barterPropertyValue);
+        return Objects.hash(id, propertyId, neighborhoodId, type, dorms, suites, bathrooms, garages, pool, balcony, elevator, barbecueGrill, value, financing, financingValue, barterVehicle, barterVehicleValue, barterProperty, barterPropertyValue);
     }
 
     @Override
@@ -170,11 +169,11 @@ public class Sale {
                 .add("dorms=" + dorms)
                 .add("suites=" + suites)
                 .add("bathrooms=" + bathrooms)
+                .add("garages=" + garages)
                 .add("pool=" + pool)
                 .add("balcony=" + balcony)
                 .add("elevator=" + elevator)
                 .add("barbecueGrill=" + barbecueGrill)
-                .add("garages=" + garages)
                 .add("value=" + value)
                 .add("financing=" + financing)
                 .add("financingValue=" + financingValue)

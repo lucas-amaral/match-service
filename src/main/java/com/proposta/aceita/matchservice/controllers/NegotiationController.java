@@ -20,16 +20,12 @@ public class NegotiationController {
 
     @GetMapping("/sales/{saleId}")
     public ResponseEntity<?> getBySales(@PathVariable Integer saleId) {
-        return negotiationService.getNegotiationBySaleId(saleId)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.status(INTERNAL_SERVER_ERROR).build());
+        return ResponseEntity.ok(negotiationService.getNegotiationBySaleId(saleId));
     }
 
     @GetMapping("/interests/{interestId}")
     public ResponseEntity<?> getByInterest(@PathVariable Integer interestId) {
-        return negotiationService.getNegotiationByInterestId(interestId)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.status(INTERNAL_SERVER_ERROR).build());
+        return ResponseEntity.ok(negotiationService.getNegotiationByInterestId(interestId));
     }
 
     @PutMapping("/{id}/approved_by_seller")

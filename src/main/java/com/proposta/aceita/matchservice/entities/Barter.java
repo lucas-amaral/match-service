@@ -3,16 +3,15 @@ package com.proposta.aceita.matchservice.entities;
 import com.proposta.aceita.matchservice.entities.enums.BarterType;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.math.BigDecimal;
 import java.util.Objects;
 import java.util.StringJoiner;
 
 @Document("barters")
 public class Barter {
     private final BarterType type;
-    private final BigDecimal value;
+    private final Double value;
 
-    public Barter(BarterType type, BigDecimal value) {
+    public Barter(BarterType type, Double value) {
         this.type = type;
         this.value = value;
     }
@@ -21,7 +20,7 @@ public class Barter {
         return type;
     }
 
-    public BigDecimal getValue() {
+    public Double getValue() {
         return value;
     }
 

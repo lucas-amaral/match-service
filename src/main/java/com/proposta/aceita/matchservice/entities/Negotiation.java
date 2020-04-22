@@ -11,7 +11,7 @@ import java.util.StringJoiner;
 @Document("negotiations")
 public class Negotiation {
     @MongoId
-    private final String id;
+    private String id;
     private final Interest interest;
     private final Sale sale;
     private final LocalDateTime createdAt;
