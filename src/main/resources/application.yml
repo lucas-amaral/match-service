@@ -11,5 +11,8 @@ services:
     username: internal
     password: yblYhVyCtFB0aSm5
 
-  url:
-    notification: notification.com
+  notification:
+    name: notification-service
+    url: https://notification-pa-service.herokuapp.com/
+    username: internal
+    password: wUrw93cGGYczZKsU

@@ -27,13 +27,6 @@ public class InterestController {
                 .orElse(ResponseEntity.status(INTERNAL_SERVER_ERROR).build());
     }
 
-    @PutMapping
-    public ResponseEntity<?> put(@Validated @RequestBody Interest body) {
-        return interestService.save(body)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.status(INTERNAL_SERVER_ERROR).build());
-    }
-
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Integer id) {
         interestService.delete(id);

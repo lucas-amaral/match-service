@@ -21,10 +21,19 @@ public class SaleService {
 
     public Optional<Sale> save(Sale sale) {
 
+        ifAlreadyExistsRemoveOldNegotiations(sale.getId());
+
         negotiationService.findAsyncMatches(sale);
 
         return Optional.of(saleRepository.save(sale));
     }
+
+    private void ifAlreadyExistsRemoveOldNegotiations(Integer saleId) {
+        saleRepository.findById(saleId)
+                .ifPresent(interest -> negotiationService.getNegotiationBySaleId(saleId)
+                        .forEach(negotiation -> negotiationService.reprovedBySeller(negotiation.getId())));
+    }
+
 
     public void delete(Integer id) {
 

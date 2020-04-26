@@ -27,13 +27,6 @@ public class SaleController {
                 .orElse(ResponseEntity.status(INTERNAL_SERVER_ERROR).build());
     }
 
-    @PutMapping
-    public ResponseEntity<?> put(@Validated @RequestBody Sale body) {
-        return saleService.save(body)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.status(INTERNAL_SERVER_ERROR).build());
-    }
-
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Integer id) {
         saleService.delete(id);

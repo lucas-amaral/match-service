@@ -21,9 +21,17 @@ public class InterestService {
 
     public Optional<Interest> save(Interest interest) {
 
+        ifAlreadyExistsRemoveOldNegotiations(interest.getId());
+
         negotiationService.findAsyncMatches(interest);
 
         return Optional.of(interestRepository.save(interest));
+    }
+
+    private void ifAlreadyExistsRemoveOldNegotiations(Integer interestId) {
+        interestRepository.findById(interestId)
+                .ifPresent(interest -> negotiationService.getNegotiationByInterestId(interestId)
+                        .forEach(negotiation -> negotiationService.reprovedByBuyer(negotiation.getId())));
     }
 
     public void delete(Integer id) {

@@ -19,7 +19,7 @@ public class NegotiationController {
     }
 
     @GetMapping("/sales/{saleId}")
-    public ResponseEntity<?> getBySales(@PathVariable Integer saleId) {
+    public ResponseEntity<?> getBySale(@PathVariable Integer saleId) {
         return ResponseEntity.ok(negotiationService.getNegotiationBySaleId(saleId));
     }
 

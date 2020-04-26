@@ -12,11 +12,11 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import static com.proposta.aceita.matchservice.entities.enums.BarterType.VEHICLE;
 import static com.proposta.aceita.matchservice.entities.enums.PropertyType.APARTMENT;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 public class SaleServiceTest {
@@ -35,17 +35,44 @@ public class SaleServiceTest {
     }
 
     @Test
-    public void save() {
+    public void saveIfANewSale() {
+        var id = 234;
 
-        var sale = new Sale(234, 32, 3, APARTMENT, 3, 2, 2, 1, true, true, true, false, 34554.26, true, 214.55, true, 100.00, false, null);
+        var sale = new Sale(id, 32, 3, APARTMENT, 3, 2, 2, 1, true, true, true, false, 34554.26, true, 214.55, true, 100.00, false, null);
 
         when(saleRepository.save(sale)).thenReturn(sale);
+        when(saleRepository.findById(id)).thenReturn(Optional.empty());
 
         saleService.save(sale);
 
         verify(saleRepository).save(sale);
 
         verify(negotiationService).findAsyncMatches(sale);
+
+        verifyNoMoreInteractions(negotiationService);
+    }
+
+    @Test
+    public void saveIfAOldSale() {
+        var id = 234;
+
+        var sale = new Sale(id, 32, 3, APARTMENT, 3, 2, 2, 1, true, true, true, false, 34554.26, true, 214.55, true, 100.00, false, null);
+
+        var negotiation1 = new Negotiation("2324sdd022343", null, sale, LocalDateTime.of(2020, 3, 4, 10, 15));
+        var negotiation2 = new Negotiation("23m2jjkssaio2", null, sale, LocalDateTime.of(2020, 2, 24, 4, 46));
+
+        when(saleRepository.save(sale)).thenReturn(sale);
+        when(saleRepository.findById(id)).thenReturn(Optional.of(sale));
+        when(negotiationService.getNegotiationBySaleId(id)).thenReturn(List.of(negotiation1, negotiation2));
+
+        saleService.save(sale);
+
+        verify(saleRepository).save(sale);
+
+        verify(negotiationService).findAsyncMatches(sale);
+
+        verify(negotiationService).reprovedBySeller("2324sdd022343");
+        verify(negotiationService).reprovedBySeller("23m2jjkssaio2");
     }
 
     @Test
