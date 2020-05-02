@@ -24,7 +24,7 @@ public class NegotiationApprovedBySeller {
     }
 
     public static NegotiationApprovedBySeller of(Negotiation negotiation) {
-        return new NegotiationApprovedBySeller(null, negotiation.getInterest(), negotiation.getSale(), LocalDateTime.now());
+        return new NegotiationApprovedBySeller(negotiation.getId(), negotiation.getInterest(), negotiation.getSale(), LocalDateTime.now());
     }
 
     public String getId() {

@@ -97,8 +97,8 @@ public class NegotiationServiceTest {
                 new Negotiation(null, interest234, sale, LocalDateTime.now()),
                 new Negotiation(null, interest235, sale, LocalDateTime.now())));
 
-        verify(notificationService).sendMatchEmail(new Negotiation(null, interest234, sale, LocalDateTime.now()));
-        verify(notificationService).sendMatchEmail(new Negotiation(null, interest235, sale, LocalDateTime.now()));
+        verify(notificationService).sendMatchEmailForSeller(new Negotiation(null, interest234, sale, LocalDateTime.now()));
+        verify(notificationService).sendMatchEmailForSeller(new Negotiation(null, interest235, sale, LocalDateTime.now()));
     }
 
     @Test
@@ -130,8 +130,8 @@ public class NegotiationServiceTest {
                 new Negotiation(null, interest, sale144, LocalDateTime.now()),
                 new Negotiation(null, interest, sale146, LocalDateTime.now())));
 
-        verify(notificationService).sendMatchEmail(new Negotiation(null, interest, sale144, LocalDateTime.now()));
-        verify(notificationService).sendMatchEmail(new Negotiation(null, interest, sale146, LocalDateTime.now()));
+        verify(notificationService).sendMatchEmailForSeller(new Negotiation(null, interest, sale144, LocalDateTime.now()));
+        verify(notificationService).sendMatchEmailForSeller(new Negotiation(null, interest, sale146, LocalDateTime.now()));
     }
 
     @Test
@@ -163,7 +163,8 @@ public class NegotiationServiceTest {
 
         negotiationService.approvedBySeller(id);
 
-        verify(negotiationApprovedBySellerRepository).save(new NegotiationApprovedBySeller(null, interest, sale, LocalDateTime.now()));
+        verify(negotiationApprovedBySellerRepository).save(new NegotiationApprovedBySeller(id, interest, sale, LocalDateTime.now()));
+        verify(notificationService).sendMatchEmailForBuyer(new Negotiation(id, interest, sale, LocalDateTime.now()));
         verify(negotiationRepository).delete(negotiation);
     }
 
@@ -176,7 +177,7 @@ public class NegotiationServiceTest {
         negotiationService.approvedBySeller(id);
 
         verify(negotiationRepository).findById(id);
-        verifyNoInteractions(negotiationApprovedBySellerRepository);
+        verifyNoInteractions(negotiationApprovedBySellerRepository, notificationService);
         verifyNoMoreInteractions(negotiationRepository);
     }
 
@@ -194,7 +195,8 @@ public class NegotiationServiceTest {
 
         negotiationService.approvedByBuyer(id);
 
-        verify(negotiationClosedRepository).save(new NegotiationClosed(null, interest, sale, FINISHED, LocalDateTime.now()));
+        verify(negotiationClosedRepository).save(new NegotiationClosed(id, interest, sale, FINISHED, LocalDateTime.now()));
+        verify(notificationService).sendDealEmail(negotiation);
         verify(negotiationApprovedBySellerRepository).delete(negotiation);
     }
 
@@ -207,7 +209,7 @@ public class NegotiationServiceTest {
         negotiationService.approvedByBuyer(id);
 
         verify(negotiationApprovedBySellerRepository).findById(id);
-        verifyNoInteractions(negotiationClosedRepository);
+        verifyNoInteractions(negotiationClosedRepository, notificationService);
         verifyNoMoreInteractions(negotiationApprovedBySellerRepository);
     }
 
@@ -225,7 +227,7 @@ public class NegotiationServiceTest {
 
         negotiationService.reprovedBySeller(id);
 
-        verify(negotiationClosedRepository).save(new NegotiationClosed(null, interest, sale, NOT_APPROVED_BY_THE_SELLER, LocalDateTime.now()));
+        verify(negotiationClosedRepository).save(new NegotiationClosed(id, interest, sale, NOT_APPROVED_BY_THE_SELLER, LocalDateTime.now()));
         verify(negotiationRepository).delete(negotiation);
     }
 
@@ -256,7 +258,7 @@ public class NegotiationServiceTest {
 
         negotiationService.reprovedByBuyer(id);
 
-        verify(negotiationClosedRepository).save(new NegotiationClosed(null, interest, sale, NOT_APPROVED_BY_THE_BUYER, LocalDateTime.now()));
+        verify(negotiationClosedRepository).save(new NegotiationClosed(id, interest, sale, NOT_APPROVED_BY_THE_BUYER, LocalDateTime.now()));
         verify(negotiationApprovedBySellerRepository).delete(negotiation);
     }
 

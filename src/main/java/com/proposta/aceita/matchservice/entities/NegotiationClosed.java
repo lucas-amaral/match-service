@@ -30,11 +30,11 @@ public class NegotiationClosed {
     }
 
     public static NegotiationClosed of(Negotiation negotiation) {
-        return new NegotiationClosed(null, negotiation.getInterest(), negotiation.getSale(), NOT_APPROVED_BY_THE_SELLER, LocalDateTime.now());
+        return new NegotiationClosed(negotiation.getId(), negotiation.getInterest(), negotiation.getSale(), NOT_APPROVED_BY_THE_SELLER, LocalDateTime.now());
     }
 
     public static NegotiationClosed of(NegotiationApprovedBySeller negotiation, NegotiationStatus status) {
-        return new NegotiationClosed(null, negotiation.getInterest(), negotiation.getSale(), status, LocalDateTime.now());
+        return new NegotiationClosed(negotiation.getId(), negotiation.getInterest(), negotiation.getSale(), status, LocalDateTime.now());
     }
 
     public String getId() {

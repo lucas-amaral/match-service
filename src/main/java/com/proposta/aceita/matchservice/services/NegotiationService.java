@@ -64,7 +64,7 @@ public class NegotiationService {
         if (!CollectionUtils.isEmpty(negotiations)) {
             negotiationRepository.save(negotiations);
 
-            negotiations.forEach(notificationService::sendMatchEmail);
+            negotiations.forEach(notificationService::sendMatchEmailForSeller);
         }
     }
 
@@ -84,7 +84,7 @@ public class NegotiationService {
         if (!CollectionUtils.isEmpty(negotiations)) {
             negotiationRepository.save(negotiations);
 
-            negotiations.forEach(notificationService::sendMatchEmail);
+            negotiations.forEach(notificationService::sendMatchEmailForSeller);
         }
 
     }
@@ -93,6 +93,8 @@ public class NegotiationService {
         negotiationRepository.findById(id).ifPresent(negotiation -> {
             negotiationApprovedBySellerRepository.save(NegotiationApprovedBySeller.of(negotiation));
 
+            notificationService.sendMatchEmailForBuyer(negotiation);
+
             negotiationRepository.delete(negotiation);
         });
     }
@@ -100,6 +102,8 @@ public class NegotiationService {
     public void approvedByBuyer(String id) {
         negotiationApprovedBySellerRepository.findById(id).ifPresent(negotiation -> {
             negotiationClosedRepository.save(NegotiationClosed.of(negotiation, FINISHED));
+
+            notificationService.sendDealEmail(negotiation);
 
             negotiationApprovedBySellerRepository.delete(negotiation);
         });

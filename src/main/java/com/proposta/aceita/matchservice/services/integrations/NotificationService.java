@@ -1,6 +1,7 @@
 package com.proposta.aceita.matchservice.services.integrations;
 
 import com.proposta.aceita.matchservice.entities.Negotiation;
+import com.proposta.aceita.matchservice.entities.NegotiationApprovedBySeller;
 import com.proposta.aceita.matchservice.services.integrations.clients.NotificationClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -31,7 +32,15 @@ public class NotificationService extends IntegrationService {
         authHeader = "Basic " + Base64Utils.encodeToString(auth.getBytes());
     }
 
-    public void sendMatchEmail(Negotiation negotiation) {
-        notificationClient.sendMatchEmail(authHeader, negotiation);
+    public void sendMatchEmailForSeller(Negotiation negotiation) {
+        notificationClient.sendMatchEmailForSeller(authHeader, negotiation);
+    }
+
+    public void sendMatchEmailForBuyer(Negotiation body) {
+        notificationClient.sendMatchEmailForBuyer(authHeader, body);
+    }
+
+    public void sendDealEmail(NegotiationApprovedBySeller body) {
+        notificationClient.dealEmail(authHeader, body);
     }
 }
