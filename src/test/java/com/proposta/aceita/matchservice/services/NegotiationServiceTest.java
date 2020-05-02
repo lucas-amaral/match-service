@@ -4,12 +4,14 @@ import com.proposta.aceita.matchservice.entities.*;
 import com.proposta.aceita.matchservice.repositories.NegotiationApprovedBySellerRepository;
 import com.proposta.aceita.matchservice.repositories.NegotiationClosedRepository;
 import com.proposta.aceita.matchservice.repositories.NegotiationRepository;
+import com.proposta.aceita.matchservice.services.integrations.NotificationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,11 +32,14 @@ public class NegotiationServiceTest {
     @MockBean
     private NegotiationClosedRepository negotiationClosedRepository;
 
+    @MockBean
+    private NotificationService notificationService;
+
     private NegotiationService negotiationService;
 
     @BeforeEach
     public void setup() {
-        negotiationService = new NegotiationService(negotiationRepository, negotiationApprovedBySellerRepository, negotiationClosedRepository);
+        negotiationService = new NegotiationService(negotiationRepository, negotiationApprovedBySellerRepository, negotiationClosedRepository, notificationService);
     }
 
     @Test
@@ -91,6 +96,23 @@ public class NegotiationServiceTest {
         verify(negotiationRepository).save(List.of(
                 new Negotiation(null, interest234, sale, LocalDateTime.now()),
                 new Negotiation(null, interest235, sale, LocalDateTime.now())));
+
+        verify(notificationService).sendMatchEmail(new Negotiation(null, interest234, sale, LocalDateTime.now()));
+        verify(notificationService).sendMatchEmail(new Negotiation(null, interest235, sale, LocalDateTime.now()));
+    }
+
+    @Test
+    public void dontFindMatchesBySale() {
+        var sale = new Sale(144, 32, 3, APARTMENT, 3, 2, 2, 1, true, true, true, false, 34554.26, true, 214.55, true, 100.00, false, null);
+
+        when(negotiationRepository.findInterestsBySale(sale)).thenReturn(Collections.emptyList());
+
+        negotiationService.findMatches(sale);
+
+        verify(negotiationRepository).findInterestsBySale(sale);
+
+        verifyNoMoreInteractions(negotiationRepository);
+        verifyNoInteractions(notificationService);
     }
 
     @Test
@@ -107,6 +129,24 @@ public class NegotiationServiceTest {
         verify(negotiationRepository).save(List.of(
                 new Negotiation(null, interest, sale144, LocalDateTime.now()),
                 new Negotiation(null, interest, sale146, LocalDateTime.now())));
+
+        verify(notificationService).sendMatchEmail(new Negotiation(null, interest, sale144, LocalDateTime.now()));
+        verify(notificationService).sendMatchEmail(new Negotiation(null, interest, sale146, LocalDateTime.now()));
+    }
+
+    @Test
+    public void dontFindMatchesByInterest() {
+        var barter = new Barter(VEHICLE, 34.32);
+        var interest = new Interest(234, 1213.23, false, null, List.of(APARTMENT), List.of(1,3), 3, 1, 3, 2, false, true, true, true, List.of(barter));
+
+        when(negotiationRepository.findSalesByInterest(interest)).thenReturn(Collections.emptyList());
+
+        negotiationService.findMatches(interest);
+
+        verify(negotiationRepository).findSalesByInterest(interest);
+
+        verifyNoMoreInteractions(negotiationRepository);
+        verifyNoInteractions(notificationService);
     }
 
     @Test

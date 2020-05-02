@@ -1,15 +1,15 @@
 package com.proposta.aceita.matchservice.services;
 
 import com.proposta.aceita.matchservice.entities.*;
-import com.proposta.aceita.matchservice.entities.enums.NegotiationStatus;
 import com.proposta.aceita.matchservice.repositories.NegotiationApprovedBySellerRepository;
 import com.proposta.aceita.matchservice.repositories.NegotiationClosedRepository;
 import com.proposta.aceita.matchservice.repositories.NegotiationRepository;
+import com.proposta.aceita.matchservice.services.integrations.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
@@ -22,12 +22,14 @@ public class NegotiationService {
     private final NegotiationRepository negotiationRepository;
     private final NegotiationApprovedBySellerRepository negotiationApprovedBySellerRepository;
     private final NegotiationClosedRepository negotiationClosedRepository;
+    private final NotificationService notificationService;
 
     @Autowired
-    public NegotiationService(NegotiationRepository negotiationRepository, NegotiationApprovedBySellerRepository negotiationApprovedBySellerRepository, NegotiationClosedRepository negotiationClosedRepository) {
+    public NegotiationService(NegotiationRepository negotiationRepository, NegotiationApprovedBySellerRepository negotiationApprovedBySellerRepository, NegotiationClosedRepository negotiationClosedRepository, NotificationService notificationService) {
         this.negotiationRepository = negotiationRepository;
         this.negotiationApprovedBySellerRepository = negotiationApprovedBySellerRepository;
         this.negotiationClosedRepository = negotiationClosedRepository;
+        this.notificationService = notificationService;
     }
 
     public List<Negotiation> getNegotiationBySaleId(Integer saleId) {
@@ -59,9 +61,11 @@ public class NegotiationService {
         var negotiations = negotiationRepository.findInterestsBySale(sale).stream()
                 .map(interest -> Negotiation.of(interest, sale)).collect(Collectors.toList());
 
-        negotiationRepository.save(negotiations);
+        if (!CollectionUtils.isEmpty(negotiations)) {
+            negotiationRepository.save(negotiations);
 
-        //todo: send email for each negotiation
+            negotiations.forEach(notificationService::sendMatchEmail);
+        }
     }
 
     public void findAsyncMatches(Interest interest) {
@@ -77,9 +81,11 @@ public class NegotiationService {
         var negotiations = negotiationRepository.findSalesByInterest(interest).stream()
                 .map(sale -> Negotiation.of(interest, sale)).collect(Collectors.toList());
 
-        negotiationRepository.save(negotiations);
+        if (!CollectionUtils.isEmpty(negotiations)) {
+            negotiationRepository.save(negotiations);
 
-        //todo: send email for each negotiation
+            negotiations.forEach(notificationService::sendMatchEmail);
+        }
 
     }
 
@@ -88,8 +94,6 @@ public class NegotiationService {
             negotiationApprovedBySellerRepository.save(NegotiationApprovedBySeller.of(negotiation));
 
             negotiationRepository.delete(negotiation);
-
-            //todo: send email to buyer
         });
     }
 
@@ -98,8 +102,6 @@ public class NegotiationService {
             negotiationClosedRepository.save(NegotiationClosed.of(negotiation, FINISHED));
 
             negotiationApprovedBySellerRepository.delete(negotiation);
-
-            //todo: send email to seller
         });
     }
 
@@ -108,8 +110,6 @@ public class NegotiationService {
             negotiationClosedRepository.save(NegotiationClosed.of(negotiation));
 
             negotiationRepository.delete(negotiation);
-
-            //todo: send email to buyer
         });
     }
 
@@ -118,8 +118,6 @@ public class NegotiationService {
             negotiationClosedRepository.save(NegotiationClosed.of(negotiation, NOT_APPROVED_BY_THE_BUYER));
 
             negotiationApprovedBySellerRepository.delete(negotiation);
-
-            //todo: send email to seller
         });
     }
 }

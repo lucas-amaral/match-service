@@ -3,12 +3,12 @@ package com.proposta.aceita.matchservice.repositories;
 import com.proposta.aceita.matchservice.entities.Interest;
 import com.proposta.aceita.matchservice.entities.Negotiation;
 import com.proposta.aceita.matchservice.entities.Sale;
-import com.proposta.aceita.matchservice.util.CheckUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.Optional;
@@ -153,7 +153,7 @@ public class NegotiationRepository {
     }
 
     private void addBartersCriteria(Criteria criteria, Interest interest) {
-        if (!CheckUtils.listIsNullOrEmpty(interest.getBarters())) {
+        if (!CollectionUtils.isEmpty(interest.getBarters())) {
             interest.getBarters().forEach(barter -> {
                 if (barter.getType().equals(VEHICLE)) {
                     criteria

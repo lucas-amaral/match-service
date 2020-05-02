@@ -28,25 +28,25 @@ public class NegotiationController {
         return ResponseEntity.ok(negotiationService.getNegotiationByInterestId(interestId));
     }
 
-    @PutMapping("/{id}/approved_by_seller")
+    @PutMapping("/{id}/approved-by-seller")
     public ResponseEntity<?> approvedBySeller(@PathVariable String id) {
         negotiationService.approvedBySeller(id);
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/{id}/approved_by_buyer")
+    @PutMapping("/{id}/approved-by-buyer")
     public ResponseEntity<?> approvedByBuyer(@PathVariable String id) {
         negotiationService.approvedByBuyer(id);
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/{id}/reproved_by_seller")
+    @DeleteMapping("/{id}/reproved-by-seller")
     public ResponseEntity<?> reprovedBySeller(@PathVariable String id) {
         negotiationService.reprovedBySeller(id);
         return ResponseEntity.noContent().build();
     }
 
-    @DeleteMapping("/{id}/reproved_by_buyer")
+    @DeleteMapping("/{id}/reproved-by-buyer")
     public ResponseEntity<?> reprovedByBuyer(@PathVariable String id) {
         negotiationService.reprovedByBuyer(id);
         return ResponseEntity.noContent().build();

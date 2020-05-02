@@ -1,5 +1,11 @@
 services:
 
   internal:
-    username: internal
-    password: yblYhVyCtFB0aSm5
+    username: user
+    password: password
+
+  notification:
+    name: notification-service
+    url: https://notification.com
+    username: user
+    password: password
