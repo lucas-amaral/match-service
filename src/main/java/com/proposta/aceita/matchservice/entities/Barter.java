@@ -8,12 +8,18 @@ import java.util.StringJoiner;
 
 @Document("barters")
 public class Barter {
+    private final Integer id;
     private final BarterType type;
     private final Double value;
 
-    public Barter(BarterType type, Double value) {
+    public Barter(Integer id, BarterType type, Double value) {
+        this.id = id;
         this.type = type;
         this.value = value;
+    }
+
+    public Integer getId() {
+        return id;
     }
 
     public BarterType getType() {
@@ -29,18 +35,20 @@ public class Barter {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Barter barter = (Barter) o;
-        return type == barter.type &&
+        return Objects.equals(id, barter.id) &&
+                type == barter.type &&
                 Objects.equals(value, barter.value);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(type, value);
+        return Objects.hash(id, type, value);
     }
 
     @Override
     public String toString() {
         return new StringJoiner(", ", Barter.class.getSimpleName() + "[", "]")
+                .add("id=" + id)
                 .add("type=" + type)
                 .add("value=" + value)
                 .toString();

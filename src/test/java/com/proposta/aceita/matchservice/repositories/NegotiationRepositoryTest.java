@@ -41,7 +41,7 @@ public class NegotiationRepositoryTest {
     }
 
     public Negotiation createNegotiation() {
-        var barter = new Barter(VEHICLE, 34.32);
+        var barter = new Barter(1, VEHICLE, 34.32);
         var interest = new Interest(234, 1213.23, false, null, List.of(APARTMENT), List.of(1,3), 3, 1, 3, 2, false, true, true, true, List.of(barter));
         var sale = new Sale(144, 32, 3, APARTMENT, 3, 2, 2, 1, true, true, true, false, 34554.26, true, 214.55, true, 100.0, false, null);
 
@@ -53,7 +53,7 @@ public class NegotiationRepositoryTest {
     @Test
     public void save() {
 
-        var barter = new Barter(VEHICLE, 34.32);
+        var barter = new Barter(1, VEHICLE, 34.32);
         var interest = new Interest(127, 1213.23, false, null, List.of(APARTMENT), List.of(1,3), 3, 1, 3, 2, false, true, true, true, List.of(barter));
         var sale = new Sale(574, 32, 3, APARTMENT, 3, 2, 2, 1, true, true, true, false, 34554.26, true, 214.55, true, 100.0, false, null);
 
@@ -106,9 +106,9 @@ public class NegotiationRepositoryTest {
 
     @Test
     public void findInterestsBySale() {
-        var barterVehicle = new Barter(VEHICLE, 90.99);
-        var barterProperty = new Barter(PROPERTY, 201.40);
-        var barterVehicleHighestPrice = new Barter(VEHICLE, 320.01);
+        var barterVehicle = new Barter(1, VEHICLE, 90.99);
+        var barterProperty = new Barter(2, PROPERTY, 201.40);
+        var barterVehicleHighestPrice = new Barter(1, VEHICLE, 320.01);
 
         var interestMatch = new Interest(234, 413.65, false, null, List.of(APARTMENT), List.of(1,3), 3, 1, 3, 2, false, false, false, false, List.of(barterVehicle));
         var interestInvalidBarter = new Interest(235, 495.50, false, null, List.of(APARTMENT), List.of(4,3,5), 2, 0, 2, 1, false, false, false, false, List.of(barterProperty));
@@ -182,7 +182,7 @@ public class NegotiationRepositoryTest {
                 saleWithoutElevator,
                 saleWithoutBarbecueGrill));
 
-        var barter = new Barter(VEHICLE, 114.99);
+        var barter = new Barter(1, VEHICLE, 114.99);
         var interest = new Interest(144, 400.00, true, 320.00, List.of(COMERCIAL, APARTMENT), List.of(1,2,3), 3, 1, 3, 2, true, true, true, true, List.of(barter));
 
         assertThat(negotiationRepository.findSalesByInterest(interest)).containsOnly(saleMatch);

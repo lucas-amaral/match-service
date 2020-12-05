@@ -27,7 +27,22 @@ public class Interest {
     private final Boolean barbecueGrill;
     private final List<Barter> barters;
 
-    public Interest(Integer id, Double value, Boolean financing, Double financingValue, List<PropertyType> types, List<Integer> neighborhoodIds, Integer dorms, Integer suites, Integer bathrooms, Integer garages, Boolean pool, Boolean balcony, Boolean elevator, Boolean barbecueGrill, List<Barter> barters) {
+    public Interest(
+            Integer id,
+            Double value,
+            Boolean financing,
+            Double financingValue,
+            List<PropertyType> types,
+            List<Integer> neighborhoodIds,
+            Integer dorms,
+            Integer suites,
+            Integer bathrooms,
+            Integer garages,
+            Boolean pool,
+            Boolean balcony,
+            Boolean elevator,
+            Boolean barbecueGrill,
+            List<Barter> barters) {
         this.id = id;
         this.value = value;
         this.financing = financing;

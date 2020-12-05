@@ -39,7 +39,7 @@ public class InterestServiceTest {
 
         var id = 234;
 
-        var barter = new Barter(VEHICLE, 34.32);
+        var barter = new Barter(id, VEHICLE, 34.32);
         var interest = new Interest(id, 1213.23, false, null, List.of(APARTMENT), List.of(1,3), 3, 1, 3, 2, false, true, true, true, List.of(barter));
 
         when(interestRepository.save(interest)).thenReturn(interest);
@@ -59,7 +59,7 @@ public class InterestServiceTest {
 
         var id = 234;
 
-        var barter = new Barter(VEHICLE, 34.32);
+        var barter = new Barter(id, VEHICLE, 34.32);
         var interest = new Interest(234, 1213.23, false, null, List.of(APARTMENT), List.of(1,3), 3, 1, 3, 2, false, true, true, true, List.of(barter));
 
         var negotiation1 = new Negotiation("2324sdd022343", interest, null, LocalDateTime.of(2020, 3, 4, 10, 15));
@@ -84,7 +84,7 @@ public class InterestServiceTest {
 
         var id = 32;
 
-        var barter = new Barter(VEHICLE, 34.32);
+        var barter = new Barter(id, VEHICLE, 34.32);
         var interest = new Interest(234, 1213.23, false, null, List.of(APARTMENT), List.of(1,3), 3, 1, 3, 2, false, true, true, true, List.of(barter));
         var sale = new Sale(234, 32, 3, APARTMENT, 3, 2, 2, 1, true, true, true, false, 34554.26, true, 214.55, true, 100.00, false, null);
 

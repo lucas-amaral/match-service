@@ -71,7 +71,7 @@ public class NegotiationServiceTest {
 
     @Test
     public void delete() {
-        var barter = new Barter(VEHICLE, 34.32);
+        var barter = new Barter(1, VEHICLE, 34.32);
         var interest = new Interest(234, 1213.23, false, null, List.of(APARTMENT), List.of(1,3), 3, 1, 3, 2, false, true, true, true, List.of(barter));
         var sale = new Sale(234, 32, 3, APARTMENT, 3, 2, 2, 1, true, true, true, false, 34554.26, true, 214.55, true, 100.00, false, null);
 
@@ -84,7 +84,7 @@ public class NegotiationServiceTest {
 
     @Test
     public void findMatchesBySale() {
-        var barter = new Barter(VEHICLE, 34.32);
+        var barter = new Barter(1, VEHICLE, 34.32);
         var interest234 = new Interest(234, 1213.23, false, null, List.of(APARTMENT), List.of(1,3), 3, 1, 3, 2, false, true, true, true, List.of(barter));
         var interest235 = new Interest(235, 1323.23, false, null, List.of(APARTMENT), List.of(3), 2, 0, 2, 1, false, true, true, true, List.of(barter));
         var sale = new Sale(144, 32, 3, APARTMENT, 3, 2, 2, 1, true, true, true, false, 34554.26, true, 214.55, true, 100.00, false, null);
@@ -117,7 +117,7 @@ public class NegotiationServiceTest {
 
     @Test
     public void findMatchesByInterest() {
-        var barter = new Barter(VEHICLE, 34.32);
+        var barter = new Barter(1, VEHICLE, 34.32);
         var interest = new Interest(234, 1213.23, false, null, List.of(APARTMENT), List.of(1,3), 3, 1, 3, 2, false, true, true, true, List.of(barter));
         var sale144 = new Sale(144, 32, 3, APARTMENT, 3, 2, 2, 1, true, true, true, false, 34554.26, true, 214.55, true, 100.00, false, null);
         var sale146 = new Sale(146, 235, 2, APARTMENT, 2, 1, 1, 1, false, true, false, true, 23554.26, true, 214.55, true, 100.00, false, null);
@@ -136,7 +136,7 @@ public class NegotiationServiceTest {
 
     @Test
     public void dontFindMatchesByInterest() {
-        var barter = new Barter(VEHICLE, 34.32);
+        var barter = new Barter(1, VEHICLE, 34.32);
         var interest = new Interest(234, 1213.23, false, null, List.of(APARTMENT), List.of(1,3), 3, 1, 3, 2, false, true, true, true, List.of(barter));
 
         when(negotiationRepository.findSalesByInterest(interest)).thenReturn(Collections.emptyList());
@@ -153,7 +153,7 @@ public class NegotiationServiceTest {
     public void approvedBySeller() {
         var id = "2324sdd022343";
 
-        var barter = new Barter(VEHICLE, 34.32);
+        var barter = new Barter(1, VEHICLE, 34.32);
         var interest = new Interest(234, 1213.23, false, null, List.of(APARTMENT), List.of(1,3), 3, 1, 3, 2, false, true, true, true, List.of(barter));
         var sale = new Sale(144, 32, 3, APARTMENT, 3, 2, 2, 1, true, true, true, false, 34554.26, true, 214.55, true, 100.00, false, null);
 
@@ -185,7 +185,7 @@ public class NegotiationServiceTest {
     public void approvedByBuyer() {
         var id = "2324sdd022343";
 
-        var barter = new Barter(VEHICLE, 34.32);
+        var barter = new Barter(1, VEHICLE, 34.32);
         var interest = new Interest(234, 1213.23, false, null, List.of(APARTMENT), List.of(1,3), 3, 1, 3, 2, false, true, true, true, List.of(barter));
         var sale = new Sale(144, 32, 3, APARTMENT, 3, 2, 2, 1, true, true, true, false, 34554.26, true, 214.55, true, 100.00, false, null);
 
@@ -217,7 +217,7 @@ public class NegotiationServiceTest {
     public void reprovedBySeller() {
         var id = "2324sdd022343";
 
-        var barter = new Barter(VEHICLE, 34.32);
+        var barter = new Barter(1, VEHICLE, 34.32);
         var interest = new Interest(234, 1213.23, false, null, List.of(APARTMENT), List.of(1,3), 3, 1, 3, 2, false, true, true, true, List.of(barter));
         var sale = new Sale(144, 32, 3, APARTMENT, 3, 2, 2, 1, true, true, true, false, 34554.26, true, 214.55, true, 100.00, false, null);
 
@@ -248,7 +248,7 @@ public class NegotiationServiceTest {
     public void reprovedByBuyer() {
         var id = "2324sdd022343";
 
-        var barter = new Barter(VEHICLE, 34.32);
+        var barter = new Barter(1, VEHICLE, 34.32);
         var interest = new Interest(234, 1213.23, false, null, List.of(APARTMENT), List.of(1,3), 3, 1, 3, 2, false, true, true, true, List.of(barter));
         var sale = new Sale(144, 32, 3, APARTMENT, 3, 2, 2, 1, true, true, true, false, 34554.26, true, 214.55, true, 100.00, false, null);
 
