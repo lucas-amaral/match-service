@@ -52,12 +52,30 @@ public class NegotiationServiceTest {
     }
 
     @Test
+    public void getApprovedNegotiationBySaleId() {
+        var saleId = 61;
+
+        negotiationService.getApprovedNegotiationBySaleId(saleId);
+
+        verify(negotiationRepository).findApprovedBySaleId(saleId);
+    }
+
+    @Test
     public void getNegotiationByInterestId() {
         var interestId = 61;
 
         negotiationService.getNegotiationByInterestId(interestId);
 
         verify(negotiationRepository).findByInterestId(interestId);
+    }
+
+    @Test
+    public void getApprovedNegotiationByInterestId() {
+        var interestId = 61;
+
+        negotiationService.getApprovedNegotiationByInterestId(interestId);
+
+        verify(negotiationRepository).findApprovedByInterestId(interestId);
     }
 
     @Test
@@ -80,6 +98,19 @@ public class NegotiationServiceTest {
         negotiationService.delete(negotiation);
 
         verify(negotiationRepository).delete(negotiation);
+    }
+
+    @Test
+    public void deleteApproved() {
+        var barter = new Barter(1, VEHICLE, 34.32);
+        var interest = new Interest(234, 1213.23, false, null, List.of(APARTMENT), List.of(1,3), 3, 1, 3, 2, false, true, true, true, List.of(barter));
+        var sale = new Sale(234, 32, 3, APARTMENT, 3, 2, 2, 1, true, true, true, false, 34554.26, true, 214.55, true, 100.00, false, null);
+
+        var negotiation = new NegotiationApprovedBySeller("2324sdd022343", interest, sale, LocalDateTime.of(2020, 3, 4, 10, 15));
+
+        negotiationService.delete(negotiation);
+
+        verify(negotiationApprovedBySellerRepository).delete(negotiation);
     }
 
     @Test

@@ -25,7 +25,7 @@ public class NegotiationController {
 
     @GetMapping("/interests/{interestId}")
     public ResponseEntity<?> getByInterest(@PathVariable Integer interestId) {
-        return ResponseEntity.ok(negotiationService.getNegotiationByInterestId(interestId));
+        return ResponseEntity.ok(negotiationService.getApprovedNegotiationByInterestId(interestId));
     }
 
     @PutMapping("/{id}/approved-by-seller")

@@ -1,6 +1,7 @@
 package com.proposta.aceita.matchservice.entities;
 
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.FieldType;
 import org.springframework.data.mongodb.core.mapping.MongoId;
 
 import java.time.LocalDateTime;
@@ -10,7 +11,7 @@ import java.util.StringJoiner;
 
 @Document("negotiations_approved_by_seller")
 public class NegotiationApprovedBySeller {
-    @MongoId
+    @MongoId(value = FieldType.OBJECT_ID)
     private final String id;
     private final Interest interest;
     private final Sale sale;

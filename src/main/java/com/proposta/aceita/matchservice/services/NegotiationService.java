@@ -5,6 +5,8 @@ import com.proposta.aceita.matchservice.repositories.NegotiationApprovedBySeller
 import com.proposta.aceita.matchservice.repositories.NegotiationClosedRepository;
 import com.proposta.aceita.matchservice.repositories.NegotiationRepository;
 import com.proposta.aceita.matchservice.services.integrations.NotificationService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -14,10 +16,13 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
-import static com.proposta.aceita.matchservice.entities.enums.NegotiationStatus.*;
+import static com.proposta.aceita.matchservice.entities.enums.NegotiationStatus.FINISHED;
+import static com.proposta.aceita.matchservice.entities.enums.NegotiationStatus.NOT_APPROVED_BY_THE_BUYER;
 
 @Service
 public class NegotiationService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(NegotiationService.class);
 
     private final NegotiationRepository negotiationRepository;
     private final NegotiationApprovedBySellerRepository negotiationApprovedBySellerRepository;
@@ -40,12 +45,24 @@ public class NegotiationService {
         return negotiationRepository.findByInterestId(interestId);
     }
 
+    public List<NegotiationApprovedBySeller> getApprovedNegotiationBySaleId(Integer saleId) {
+        return negotiationRepository.findApprovedBySaleId(saleId);
+    }
+
+    public List<NegotiationApprovedBySeller> getApprovedNegotiationByInterestId(Integer interestId) {
+        return negotiationRepository.findApprovedByInterestId(interestId);
+    }
+
     public void delete(String id) {
         negotiationRepository.deleteById(id);
     }
 
     public void delete(Negotiation negotiation) {
         negotiationRepository.delete(negotiation);
+    }
+
+    public void delete(NegotiationApprovedBySeller negotiation) {
+        negotiationApprovedBySellerRepository.delete(negotiation);
     }
 
     public void findAsyncMatches(Sale sale) {
@@ -58,6 +75,7 @@ public class NegotiationService {
     }
 
     void findMatches(Sale sale) {
+        LOGGER.info("Start match evaluator: {}", sale);
         var negotiations = negotiationRepository.findInterestsBySale(sale).stream()
                 .map(interest -> Negotiation.of(interest, sale)).collect(Collectors.toList());
 
@@ -78,6 +96,7 @@ public class NegotiationService {
     }
 
     void findMatches(Interest interest) {
+        LOGGER.info("Start match evaluator: {}", interest);
         var negotiations = negotiationRepository.findSalesByInterest(interest).stream()
                 .map(sale -> Negotiation.of(interest, sale)).collect(Collectors.toList());
 
@@ -93,9 +112,9 @@ public class NegotiationService {
         negotiationRepository.findById(id).ifPresent(negotiation -> {
             negotiationApprovedBySellerRepository.save(NegotiationApprovedBySeller.of(negotiation));
 
-            notificationService.sendMatchEmailForBuyer(negotiation);
-
             negotiationRepository.delete(negotiation);
+
+            notificationService.sendMatchEmailForBuyer(negotiation);
         });
     }
 
@@ -103,9 +122,9 @@ public class NegotiationService {
         negotiationApprovedBySellerRepository.findById(id).ifPresent(negotiation -> {
             negotiationClosedRepository.save(NegotiationClosed.of(negotiation, FINISHED));
 
-            notificationService.sendDealEmail(negotiation);
-
             negotiationApprovedBySellerRepository.delete(negotiation);
+
+            notificationService.sendDealEmail(negotiation);
         });
     }
 

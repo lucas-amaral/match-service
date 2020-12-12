@@ -15,7 +15,7 @@ public interface NotificationClient {
     @PutMapping("/emails/match-to-buyer")
     void sendMatchEmailForBuyer(@RequestHeader("Authorization") String authHeader, @RequestBody Negotiation body);
 
-    @PutMapping("/deal")
+    @PutMapping("/emails/deal")
     void dealEmail(@RequestHeader("Authorization") String authHeader, @RequestBody NegotiationApprovedBySeller body);
 
 }

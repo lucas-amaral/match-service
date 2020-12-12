@@ -39,5 +39,6 @@ public class InterestService {
         interestRepository.deleteById(id);
 
         negotiationService.getNegotiationByInterestId(id).forEach(negotiationService::delete);
+        negotiationService.getApprovedNegotiationByInterestId(id).forEach(negotiationService::delete);
     }
 }

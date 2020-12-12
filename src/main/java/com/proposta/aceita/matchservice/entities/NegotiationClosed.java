@@ -2,19 +2,19 @@ package com.proposta.aceita.matchservice.entities;
 
 import com.proposta.aceita.matchservice.entities.enums.NegotiationStatus;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.FieldType;
 import org.springframework.data.mongodb.core.mapping.MongoId;
 
-import javax.management.Notification;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.StringJoiner;
 
-import static com.proposta.aceita.matchservice.entities.enums.NegotiationStatus.*;
+import static com.proposta.aceita.matchservice.entities.enums.NegotiationStatus.NOT_APPROVED_BY_THE_SELLER;
 
 
 @Document("negotiations_closed")
 public class NegotiationClosed {
-    @MongoId
+    @MongoId(value = FieldType.OBJECT_ID)
     private final String id;
     private final Interest interest;
     private final Sale sale;

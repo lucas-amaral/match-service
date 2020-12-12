@@ -1,9 +1,6 @@
 package com.proposta.aceita.matchservice.services;
 
-import com.proposta.aceita.matchservice.entities.Barter;
-import com.proposta.aceita.matchservice.entities.Interest;
-import com.proposta.aceita.matchservice.entities.Negotiation;
-import com.proposta.aceita.matchservice.entities.Sale;
+import com.proposta.aceita.matchservice.entities.*;
 import com.proposta.aceita.matchservice.repositories.SaleRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -86,15 +83,21 @@ public class SaleServiceTest {
 
         var negotiation1 = new Negotiation("2324sdd022343", interest, sale, LocalDateTime.of(2020, 3, 4, 10, 15));
         var negotiation2 = new Negotiation("23m2jjkssaio2", interest, sale, LocalDateTime.of(2020, 2, 24, 4, 46));
+        var negotiation3 = new NegotiationApprovedBySeller("fda15da41521", interest, sale, LocalDateTime.of(2020, 2, 24, 4, 46));
 
         when(negotiationService.getNegotiationBySaleId(id)).thenReturn(List.of(negotiation1, negotiation2));
+        when(negotiationService.getApprovedNegotiationBySaleId(id)).thenReturn(List.of(negotiation3));
 
         saleService.delete(id);
 
         verify(saleRepository).deleteById(id);
 
+        verify(negotiationService).getNegotiationBySaleId(id);
+        verify(negotiationService).getApprovedNegotiationBySaleId(id);
+
         verify(negotiationService).delete(negotiation1);
         verify(negotiationService).delete(negotiation2);
+        verify(negotiationService).delete(negotiation3);
     }
 
 }

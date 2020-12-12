@@ -1,9 +1,6 @@
 package com.proposta.aceita.matchservice.repositories;
 
-import com.proposta.aceita.matchservice.entities.Barter;
-import com.proposta.aceita.matchservice.entities.Interest;
-import com.proposta.aceita.matchservice.entities.Negotiation;
-import com.proposta.aceita.matchservice.entities.Sale;
+import com.proposta.aceita.matchservice.entities.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -46,6 +43,16 @@ public class NegotiationRepositoryTest {
         var sale = new Sale(144, 32, 3, APARTMENT, 3, 2, 2, 1, true, true, true, false, 34554.26, true, 214.55, true, 100.0, false, null);
 
         var negotiation = new Negotiation("5e9e2e115c191353f0a60c37", interest, sale, LocalDateTime.of(2020, 3, 4, 10, 15));
+
+        return mongoTemplate.save(negotiation);
+    }
+
+    public NegotiationApprovedBySeller createApprovedNegotiation() {
+        var barter = new Barter(1, VEHICLE, 34.32);
+        var interest = new Interest(234, 1213.23, false, null, List.of(APARTMENT), List.of(1,3), 3, 1, 3, 2, false, true, true, true, List.of(barter));
+        var sale = new Sale(144, 32, 3, APARTMENT, 3, 2, 2, 1, true, true, true, false, 34554.26, true, 214.55, true, 100.0, false, null);
+
+        var negotiation = new NegotiationApprovedBySeller("5e9e2e115c191353f0a60c37", interest, sale, LocalDateTime.of(2020, 3, 4, 10, 15));
 
         return mongoTemplate.save(negotiation);
     }
@@ -95,6 +102,16 @@ public class NegotiationRepositoryTest {
     }
 
     @Test
+    public void findApprovedBySaleId() {
+
+        var saleId = 144;
+
+        var negotiation = createApprovedNegotiation();
+
+        assertThat(negotiationRepository.findApprovedBySaleId(saleId)).isEqualTo(List.of(negotiation));
+    }
+
+    @Test
     public void findByInterestId() {
 
         var interestId = 234;
@@ -102,6 +119,16 @@ public class NegotiationRepositoryTest {
         var negotiation = createNegotiation();
 
         assertThat(negotiationRepository.findByInterestId(interestId)).isEqualTo(List.of(negotiation)   );
+    }
+
+    @Test
+    public void findApprovedByInterestId() {
+
+        var interestId = 234;
+
+        var negotiation = createApprovedNegotiation();
+
+        assertThat(negotiationRepository.findApprovedByInterestId(interestId)).isEqualTo(List.of(negotiation)   );
     }
 
     @Test

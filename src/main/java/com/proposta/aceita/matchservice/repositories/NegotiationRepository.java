@@ -2,7 +2,9 @@ package com.proposta.aceita.matchservice.repositories;
 
 import com.proposta.aceita.matchservice.entities.Interest;
 import com.proposta.aceita.matchservice.entities.Negotiation;
+import com.proposta.aceita.matchservice.entities.NegotiationApprovedBySeller;
 import com.proposta.aceita.matchservice.entities.Sale;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -32,7 +34,7 @@ public class NegotiationRepository {
     }
 
     public void deleteById(String id) {
-        mongoTemplate.findAndRemove(query(Criteria.where("id").is(id)), Negotiation.class);
+        mongoTemplate.findAndRemove(query(Criteria.where("_id").is(new ObjectId(id))), Negotiation.class);
     }
 
     public void delete(Negotiation negotiation) {
@@ -40,15 +42,23 @@ public class NegotiationRepository {
     }
 
     public Optional<Negotiation> findById(String id) {
-        return Optional.ofNullable(mongoTemplate.findById(id, Negotiation.class));
+        return Optional.ofNullable(mongoTemplate.findById(new ObjectId(id), Negotiation.class));
     }
 
     public List<Negotiation> findBySaleId(Integer saleId) {
         return mongoTemplate.find(query(Criteria.where("sale.id").is(saleId)), Negotiation.class);
     }
 
+    public List<NegotiationApprovedBySeller> findApprovedBySaleId(Integer saleId) {
+        return mongoTemplate.find(query(Criteria.where("sale.id").is(saleId)), NegotiationApprovedBySeller.class);
+    }
+
     public List<Negotiation> findByInterestId(Integer interestId) {
         return mongoTemplate.find(query(Criteria.where("interest.id").is(interestId)), Negotiation.class);
+    }
+
+    public List<NegotiationApprovedBySeller> findApprovedByInterestId(Integer interestId) {
+        return mongoTemplate.find(query(Criteria.where("interest.id").is(interestId)), NegotiationApprovedBySeller.class);
     }
 
     public List<Interest> findInterestsBySale(Sale sale) {

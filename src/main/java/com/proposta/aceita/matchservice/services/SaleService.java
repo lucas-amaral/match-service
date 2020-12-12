@@ -40,5 +40,6 @@ public class SaleService {
         saleRepository.deleteById(id);
 
         negotiationService.getNegotiationBySaleId(id).forEach(negotiationService::delete);
+        negotiationService.getApprovedNegotiationBySaleId(id).forEach(negotiationService::delete);
     }
 }
